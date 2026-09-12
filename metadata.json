@@ -1,0 +1,6 @@
+{
+  "name": "Chamados de T.I",
+  "description": "Sistema para abertura, triagem e resolução de chamados de suporte técnico de Tecnologia da Informação.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
