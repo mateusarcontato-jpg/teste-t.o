@@ -162,11 +162,16 @@ export const UserPortal: React.FC<UserPortalProps> = ({
               <PlusCircle className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="font-bold text-lg text-slate-900">
-                Relatar um Problema ou Pedir Ajuda
-              </h3>
-              <p className="text-xs text-slate-500">
-                Preencha os campos simples abaixo para nossa equipe técnica entrar em ação.
+              <div className="flex items-center gap-2">
+                <h3 className="font-extrabold text-lg text-slate-900">
+                  Formulário de Entrada do Problema
+                </h3>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200">
+                  Novo Chamado
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Preencha os campos abaixo para abrir seu chamado. Nossa equipe de T.I atenderá sua solicitação.
               </p>
             </div>
           </div>

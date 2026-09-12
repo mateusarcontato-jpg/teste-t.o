@@ -8,6 +8,7 @@ import {
   Shield,
   ShieldCheck,
   Users,
+  KeyRound,
 } from 'lucide-react';
 import { User } from '../types';
 import { AmilcoLogo } from './AmilcoLogo';
@@ -88,23 +89,24 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* User Profile & Actions */}
         <div className="flex items-center gap-2.5 sm:gap-4">
-          {/* Approvals button for Admin */}
-          {isAdmin && onOpenApprovals && (
+          {/* Approvals and Passwords button for T.I Members */}
+          {isTechnician && onOpenApprovals && (
             <button
-              id="btn-nav-approvals"
+              id="btn-nav-passwords-bank"
               onClick={onOpenApprovals}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-xs ${
                 pendingUsersCount > 0
                   ? 'bg-red-600 hover:bg-red-700 text-white animate-pulse'
-                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'
+                  : 'bg-zinc-900 hover:bg-black text-amber-300 hover:text-amber-200 border border-zinc-700'
               }`}
-              title="Gerenciar cadastros e aprovações de colaboradores"
+              title="Acessar Banco de Senhas, Usuários e Aprovações"
             >
-              <Users className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Aprovações</span>
+              <KeyRound className="w-3.5 h-3.5 text-amber-400" />
+              <span className="hidden sm:inline">Banco de Senhas & Usuários</span>
+              <span className="sm:hidden">Senhas</span>
               {pendingUsersCount > 0 && (
-                <span className="bg-white text-red-700 px-1.5 py-0.2 rounded-full text-[10px] font-extrabold">
-                  {pendingUsersCount}
+                <span className="bg-red-600 text-white px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ml-0.5">
+                  {pendingUsersCount} pendente{pendingUsersCount > 1 ? 's' : ''}
                 </span>
               )}
             </button>

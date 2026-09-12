@@ -32,7 +32,17 @@ export default function App() {
   const [registeredUsers, setRegisteredUsers] = useState<User[]>(() => {
     try {
       const saved = localStorage.getItem(USERS_STORAGE_KEY);
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed: User[] = JSON.parse(saved);
+        // Ensure known accounts retain standardized passwords if missing
+        return parsed.map((u) => {
+          const defaultMatch = INITIAL_USERS.find((init) => init.id === u.id || init.username === u.username);
+          if (defaultMatch && !u.password) {
+            return { ...u, password: defaultMatch.password };
+          }
+          return u;
+        });
+      }
     } catch {}
     return INITIAL_USERS;
   });
@@ -281,6 +291,13 @@ export default function App() {
       prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u))
     );
     addToast(`Perfil atualizado para ${newRole}.`, 'info');
+  };
+
+  const handleUpdateUserPassword = (userId: string, newPass: string) => {
+    setRegisteredUsers((prev) =>
+      prev.map((u) => (u.id === userId ? { ...u, password: newPass } : u))
+    );
+    addToast('Senha atualizada com sucesso no banco de credenciais!', 'success');
   };
 
   const handleQuickSwitchRole = () => {
@@ -640,6 +657,7 @@ export default function App() {
         onApproveUser={handleApproveUser}
         onRejectUser={handleRejectUser}
         onUpdateUserRole={handleUpdateUserRole}
+        onUpdateUserPassword={handleUpdateUserPassword}
       />
 
       {/* Floating Notifications */}

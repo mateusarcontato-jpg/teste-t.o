@@ -14,6 +14,11 @@ import {
   X,
   AlertTriangle,
   BadgeCheck,
+  KeyRound,
+  Eye,
+  EyeOff,
+  Edit2,
+  Check,
 } from 'lucide-react';
 
 interface UserApprovalsModalProps {
@@ -23,6 +28,7 @@ interface UserApprovalsModalProps {
   onApproveUser: (userId: string, role?: UserRole) => void;
   onRejectUser: (userId: string) => void;
   onUpdateUserRole: (userId: string, newRole: UserRole) => void;
+  onUpdateUserPassword?: (userId: string, newPassword: string) => void;
 }
 
 export const UserApprovalsModal: React.FC<UserApprovalsModalProps> = ({
@@ -32,9 +38,35 @@ export const UserApprovalsModal: React.FC<UserApprovalsModalProps> = ({
   onApproveUser,
   onRejectUser,
   onUpdateUserRole,
+  onUpdateUserPassword,
 }) => {
-  const [activeTab, setActiveTab] = useState<'pendentes' | 'aprovados'>('pendentes');
+  const [activeTab, setActiveTab] = useState<'pendentes' | 'aprovados'>(
+    users.some((u) => u.status === 'pendente') ? 'pendentes' : 'aprovados'
+  );
   const [searchTerm, setSearchTerm] = useState('');
+  const [visiblePasswords, setVisiblePasswords] = useState<Record<string, boolean>>({});
+  const [editingPasswordUserId, setEditingPasswordUserId] = useState<string | null>(null);
+  const [newPasswordInput, setNewPasswordInput] = useState('');
+
+  if (!isOpen) return null;
+
+  const toggleShowPassword = (userId: string) => {
+    setVisiblePasswords((prev) => ({ ...prev, [userId]: !prev[userId] }));
+  };
+
+  const handleStartEditPassword = (user: User) => {
+    setEditingPasswordUserId(user.id);
+    setNewPasswordInput(user.password || 'amilco123');
+  };
+
+  const handleSavePassword = (userId: string) => {
+    if (!newPasswordInput.trim()) return;
+    if (onUpdateUserPassword) {
+      onUpdateUserPassword(userId, newPasswordInput.trim());
+    }
+    setEditingPasswordUserId(null);
+  };
+
 
   if (!isOpen) return null;
 
@@ -64,12 +96,12 @@ export const UserApprovalsModal: React.FC<UserApprovalsModalProps> = ({
         <div className="bg-gradient-to-r from-zinc-950 via-slate-900 to-red-950 text-white px-6 py-5 flex items-center justify-between border-b border-red-900/30">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-red-600 text-white flex items-center justify-center shadow-md">
-              <ShieldCheck className="w-5 h-5" />
+              <KeyRound className="w-5 h-5 text-amber-300" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-base sm:text-lg font-bold tracking-tight">
-                  Controle de Acessos & Aprovações
+                  Banco de Senhas & Controle de Usuários
                 </h2>
                 {pendingUsers.length > 0 && (
                   <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-red-600 text-white animate-pulse">
@@ -78,7 +110,7 @@ export const UserApprovalsModal: React.FC<UserApprovalsModalProps> = ({
                 )}
               </div>
               <p className="text-xs text-zinc-300">
-                Administrador: Matheus T.I &bull; Libere ou gerencie o acesso dos colaboradores
+                Amilco T.I &bull; Consulta de senhas, redefinição de acessos e aprovação de membros
               </p>
             </div>
           </div>
@@ -94,6 +126,17 @@ export const UserApprovalsModal: React.FC<UserApprovalsModalProps> = ({
         <div className="p-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-1 bg-slate-200 p-1 rounded-lg w-full sm:w-auto">
             <button
+              onClick={() => setActiveTab('aprovados')}
+              className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                activeTab === 'aprovados'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <KeyRound className="w-3.5 h-3.5 text-amber-500" />
+              <span>Banco de Senhas ({approvedUsers.length})</span>
+            </button>
+            <button
               onClick={() => setActiveTab('pendentes')}
               className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
                 activeTab === 'pendentes'
@@ -103,17 +146,6 @@ export const UserApprovalsModal: React.FC<UserApprovalsModalProps> = ({
             >
               <Clock className="w-3.5 h-3.5" />
               <span>Pendentes de Aprovação ({pendingUsers.length})</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('aprovados')}
-              className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
-                activeTab === 'aprovados'
-                  ? 'bg-white text-slate-900 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <UserCheck className="w-3.5 h-3.5" />
-              <span>Usuários Aprovados ({approvedUsers.length})</span>
             </button>
           </div>
 
@@ -159,12 +191,14 @@ export const UserApprovalsModal: React.FC<UserApprovalsModalProps> = ({
                         <span className="font-bold text-sm text-slate-900">{user.name}</span>
                         <span
                           className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
-                            user.role === 'tecnico' || user.role === 'admin'
-                              ? 'bg-rose-50 text-rose-800 border-rose-200'
-                              : 'bg-blue-50 text-blue-800 border-blue-200'
+                            user.role === 'admin'
+                              ? 'bg-purple-100 text-purple-900 border-purple-300'
+                              : user.role === 'tecnico'
+                              ? 'bg-rose-100 text-rose-900 border-rose-300'
+                              : 'bg-blue-100 text-blue-900 border-blue-300'
                           }`}
                         >
-                          Solicitou: {user.role === 'tecnico' ? 'Técnico T.I' : 'Solicitante'}
+                          Solicitou Acesso: {user.role === 'admin' ? 'Administrador' : user.role === 'tecnico' ? 'Técnico de Suporte T.I' : 'Usuário Comum'}
                         </span>
                       </div>
                       <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500">
@@ -175,6 +209,19 @@ export const UserApprovalsModal: React.FC<UserApprovalsModalProps> = ({
                         <span className="flex items-center gap-1">
                           <Building className="w-3 h-3 text-slate-400" />
                           {user.department}
+                        </span>
+                        <span>&bull;</span>
+                        <span className="flex items-center gap-1 font-mono text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded">
+                          <KeyRound className="w-3 h-3 text-amber-500" />
+                          <span>Senha: {visiblePasswords[user.id] ? user.password : '••••••'}</span>
+                          <button
+                            type="button"
+                            onClick={() => toggleShowPassword(user.id)}
+                            className="text-slate-400 hover:text-slate-600 ml-1"
+                            title="Ver senha"
+                          >
+                            {visiblePasswords[user.id] ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                          </button>
                         </span>
                         {user.createdAt && (
                           <>
@@ -236,12 +283,61 @@ export const UserApprovalsModal: React.FC<UserApprovalsModalProps> = ({
                           : 'Solicitante'}
                       </span>
                     </div>
-                    <div className="text-xs text-slate-500 flex items-center gap-3">
+                    <div className="text-xs text-slate-500 flex flex-wrap items-center gap-3 mt-1">
                       <span>
                         <strong>Login:</strong> {user.username || user.phone}
                       </span>
                       <span>&bull;</span>
                       <span>{user.department}</span>
+                      <span>&bull;</span>
+                      {editingPasswordUserId === user.id ? (
+                        <div className="flex items-center gap-1.5 bg-amber-50 p-1 rounded border border-amber-200">
+                          <input
+                            type="text"
+                            value={newPasswordInput}
+                            onChange={(e) => setNewPasswordInput(e.target.value)}
+                            placeholder="Nova senha..."
+                            className="px-2 py-0.5 text-xs bg-white border border-slate-300 rounded font-mono text-slate-900 w-28 focus:outline-none focus:ring-1 focus:ring-red-500"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleSavePassword(user.id)}
+                            className="p-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded"
+                            title="Salvar senha"
+                          >
+                            <Check className="w-3 h-3" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setEditingPasswordUserId(null)}
+                            className="p-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded"
+                            title="Cancelar"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1.5 font-mono text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded">
+                          <KeyRound className="w-3 h-3 text-amber-500" />
+                          <span>Senha: {visiblePasswords[user.id] ? user.password : '••••••'}</span>
+                          <button
+                            type="button"
+                            onClick={() => toggleShowPassword(user.id)}
+                            className="text-slate-400 hover:text-slate-600 ml-0.5"
+                            title={visiblePasswords[user.id] ? 'Ocultar senha' : 'Ver senha'}
+                          >
+                            {visiblePasswords[user.id] ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleStartEditPassword(user)}
+                            className="text-red-600 hover:text-red-700 font-sans text-[11px] font-semibold underline ml-1"
+                            title="Alterar / Redefinir Senha deste colaborador"
+                          >
+                            Redefinir
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
 

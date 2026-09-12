@@ -14,6 +14,17 @@ export const INITIAL_USERS: User[] = [
     createdAt: '2026-09-11T08:00:00.000Z',
   },
   {
+    id: 'user-tech-1',
+    name: 'Suporte Técnico T.I',
+    username: 'suporte.ti',
+    phone: '(69) 99999-0002',
+    department: 'Tecnologia da Informação (T.I)',
+    role: 'tecnico',
+    status: 'aprovado',
+    password: 'amilco123',
+    createdAt: '2026-09-11T08:30:00.000Z',
+  },
+  {
     id: 'user-demo-1',
     name: 'Patrícia Gomes',
     username: 'patricia.gomes',
@@ -21,7 +32,7 @@ export const INITIAL_USERS: User[] = [
     department: 'Financeiro / Caixa',
     role: 'solicitante',
     status: 'aprovado',
-    password: '123',
+    password: 'amilco123',
     createdAt: '2026-09-11T09:00:00.000Z',
   },
   {
@@ -31,9 +42,10 @@ export const INITIAL_USERS: User[] = [
     phone: '(69) 97777-2222',
     department: 'Vendas & Balcão',
     role: 'solicitante',
-    status: 'pendente', // Test pending approval for Matheus to test in the panel!
-    password: '123',
+    status: 'pendente', // Test pending approval for Matheus to test in the panel
+    password: 'amilco123',
     createdAt: '2026-09-11T10:15:00.000Z',
   },
 ];
+
 
