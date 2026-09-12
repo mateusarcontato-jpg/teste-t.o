@@ -87,10 +87,6 @@ export const NewTicketModal: React.FC<NewTicketModalProps> = ({
       setErrorMsg('Por favor, informe o nome do solicitante.');
       return;
     }
-    if (!requesterEmail.trim()) {
-      setErrorMsg('Por favor, informe o e-mail do solicitante.');
-      return;
-    }
     if (!description.trim()) {
       setErrorMsg('Por favor, detalhe o problema ou solicitação.');
       return;
@@ -108,7 +104,7 @@ export const NewTicketModal: React.FC<NewTicketModalProps> = ({
     onCreateTicket({
       title: title.trim(),
       requesterName: requesterName.trim(),
-      requesterEmail: requesterEmail.trim(),
+      requesterEmail: requesterEmail.trim() || 'Interno',
       department,
       category,
       priority,
@@ -226,13 +222,12 @@ export const NewTicketModal: React.FC<NewTicketModalProps> = ({
 
             <div className="space-y-1">
               <label className="text-xs font-semibold text-slate-700 block">
-                E-mail Corporativo <span className="text-rose-500">*</span>
+                Telefone ou Usuário (Opcional)
               </label>
               <input
                 id="input-new-ticket-requester-email"
-                type="email"
-                required
-                placeholder="usuario@empresa.com.br"
+                type="text"
+                placeholder="(69) 99999-9999 ou usuario"
                 value={requesterEmail}
                 onChange={(e) => setRequesterEmail(e.target.value)}
                 className="w-full px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"

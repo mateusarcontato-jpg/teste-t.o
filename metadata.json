@@ -1,6 +1,6 @@
 {
   "name": "Chamados de T.I",
-  "description": "Sistema para abertura, triagem e resolução de chamados de suporte técnico de Tecnologia da Informação.",
+  "description": "Central de Chamados Amilco T.I - Sistema de suporte técnico e service desk para o Home Center Amilco.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

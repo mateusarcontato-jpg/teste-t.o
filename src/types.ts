@@ -1,3 +1,19 @@
+export type UserRole = 'solicitante' | 'tecnico' | 'admin';
+export type UserStatus = 'aprovado' | 'pendente' | 'bloqueado';
+
+export interface User {
+  id: string;
+  name: string;
+  username: string;
+  phone?: string;
+  email?: string;
+  department: string;
+  role: UserRole;
+  status: UserStatus;
+  password?: string;
+  createdAt?: string;
+}
+
 export type TicketStatus =
   | 'aberto'
   | 'em_atendimento'
@@ -30,7 +46,8 @@ export interface Ticket {
   title: string;
   description: string;
   requesterName: string;
-  requesterEmail: string;
+  requesterEmail?: string;
+  requesterPhone?: string;
   department: string;
   category: TicketCategory;
   priority: TicketPriority;
@@ -46,10 +63,22 @@ export interface Ticket {
 
 export type ViewMode = 'lista' | 'kanban';
 
+export type DateFilterOption =
+  | 'todos'
+  | 'hoje'
+  | 'ontem'
+  | 'ultimos_7_dias'
+  | 'mes_atual'
+  | 'personalizado';
+
 export interface FilterState {
   search: string;
   status: TicketStatus | 'todos';
   priority: TicketPriority | 'todos';
   category: TicketCategory | 'todos';
   technician: string | 'todos';
+  dateOption: DateFilterOption;
+  customDate?: string;
+  onlyMyTickets?: boolean;
 }
+
